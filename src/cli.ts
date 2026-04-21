@@ -7,12 +7,11 @@ import {
   DEFAULT_BRANCH,
   DEFAULT_PROJECT_PREFIX,
   STALLNING_UPSTREAM_URL,
+  type TemplateBranch,
 } from './constants'
 import { runCreate } from './actions/run-create'
-import type { CreateContext } from './actions/types'
+import { parseCreateContext } from './context'
 import { logger } from './logger'
-
-type TemplateBranch = (typeof AVAILABLE_BRANCHES)[number]
 
 const isTemplateBranch = (value: string): value is TemplateBranch =>
   AVAILABLE_BRANCHES.some((branch) => branch === value)
@@ -22,14 +21,6 @@ const getDefaultProjectName = (template: TemplateBranch): string =>
 
 const getOptionSource = (program: Command, optionName: string): string =>
   program.getOptionValueSource(optionName) ?? 'default'
-
-const parseGitOrigin = (value: string): URL => {
-  try {
-    return new URL(value)
-  } catch {
-    throw new Error(`Invalid --git-origin URL: "${value}"`)
-  }
-}
 
 const program = new Command()
 
@@ -167,33 +158,25 @@ Examples:
       }
     }
 
-    if (gitOrigin) {
-      const originUrl = parseGitOrigin(gitOrigin)
-      gitOrigin = originUrl.toString()
-      if (getOptionSource(program, 'upstream') === 'default') {
-        upstream = true
-      }
-    }
-
-    const context: CreateContext = {
-      projectName,
-      template,
-      targetPath,
-      gitOrigin,
-      upstream,
-      strictGit,
-      dryRun,
-      verbose,
-      skipInstall,
-    }
-
-    logger.debug('Resolved create options', {
-      ...context,
-      force,
-      upstreamRemote: upstream ? STALLNING_UPSTREAM_URL : undefined,
-    })
-
     try {
+      const context = parseCreateContext({
+        projectName,
+        template,
+        targetPath,
+        gitOrigin,
+        upstream: gitOrigin && getOptionSource(program, 'upstream') === 'default' ? true : upstream,
+        strictGit,
+        dryRun,
+        verbose,
+        skipInstall,
+      })
+
+      logger.debug('Resolved create options', {
+        ...context,
+        force,
+        upstreamRemote: context.upstream ? STALLNING_UPSTREAM_URL : undefined,
+      })
+
       await runCreate(context)
       logger.success(
         dryRun

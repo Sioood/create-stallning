@@ -48,7 +48,8 @@
     "execa": "^9.6.0",
     "fast-glob": "^3.3.3",
     "fs-extra": "^11.3.2",
-    "tiged": "^2.12.7"
+    "tiged": "^2.12.7",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",

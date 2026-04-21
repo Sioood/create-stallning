@@ -1,6 +1,4 @@
-import type { AVAILABLE_BRANCHES } from '../constants'
-
-export type TemplateBranch = (typeof AVAILABLE_BRANCHES)[number]
+import type { TemplateBranch } from '../constants'
 
 export type CreateContext = {
   projectName: string
