@@ -1,6 +1,9 @@
-# create-stallning
+<div align="center">
+  <h1><b>create-stallning</b></h1>
+  <span>CLI to scaffold a new project from Ställning boilerplate templates (`minimal`, `nuxt`).</span>
 
-CLI to scaffold a new project from Stallning boilerplate templates (`minimal`, `nuxt`).
+  <img alt="image" src="https://github.com/user-attachments/assets/8331cc84-2fcc-48f4-93ce-a35b7dead2ea" style="width: 100%" />
+</div>
 
 ## Requirements
 
