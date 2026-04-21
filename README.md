@@ -15,13 +15,13 @@
 Use the package in create mode:
 
 ```bash
-pnpm create stallning my-app
+pnpm create stallning@latest my-app
 ```
 
 Or run the CLI binary directly:
 
 ```bash
-pnpx create-stallning my-app
+pnpx create-stallning@latest my-app
 ```
 
 ## Usage
