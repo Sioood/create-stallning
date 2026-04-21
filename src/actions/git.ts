@@ -25,7 +25,7 @@ const upsertRemote = async (ctx: CreateContext, name: string, url: string): Prom
 export const setupGit = async (ctx: CreateContext): Promise<void> => {
   await runGit(ctx, ['init'])
   await runGit(ctx, ['add', '-A'])
-  await runGit(ctx, ['commit', '-m', 'init project from stallning template'])
+  await runGit(ctx, ['commit', '-m', 'chore: 🎉 init project from stallning template'])
 
   if (ctx.gitOrigin) {
     await upsertRemote(ctx, 'origin', ctx.gitOrigin)
