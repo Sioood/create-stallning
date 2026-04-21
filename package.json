@@ -1,6 +1,6 @@
 {
   "name": "create-stallning",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "CLI to create a new project with stallning monorepo boilerplate",
   "homepage": "https://github.com/Sioood/create-stallning#readme",
   "bugs": {
