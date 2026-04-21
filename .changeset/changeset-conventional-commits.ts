@@ -181,8 +181,12 @@ export const conventionalMessagesWithCommitsToChangesets = (
       })
 
       const packagesChanged = packages.filter((pkg) => {
+        if (pkg.dir === repoRoot) {
+          return filesChanged.length > 0
+        }
+
         const pkgDir = `${pkg.dir.replace(`${repoRoot}/`, '')}/`
-        return filesChanged.some((file) => file.match(pkgDir))
+        return filesChanged.some((file) => file.startsWith(pkgDir))
       })
 
       const packageNames = packagesChanged
@@ -255,8 +259,19 @@ const conventionalCommitChangeset = async (
   cwd: string = process.cwd(),
   options: { ignoredFiles?: (string | RegExp)[]; dryRun?: boolean } = {},
 ) => {
-  const packages = getPackagesSync(cwd).packages.filter(
-    (pkg) => !pkg.packageJson.private && Boolean(pkg.packageJson.version),
+  const discovered = getPackagesSync(cwd)
+  const candidatePackages = [
+    ...discovered.packages,
+    ...(discovered.rootPackage ? [discovered.rootPackage] : []),
+  ].filter(Boolean)
+
+  const uniquePackages = Array.from(
+    new Map(candidatePackages.map((pkg) => [pkg.dir, pkg])).values(),
+  )
+
+  const packages = uniquePackages.filter(
+    (pkg) =>
+      !pkg.packageJson.private && Boolean(pkg.packageJson.version) && Boolean(pkg.packageJson.name),
   )
   const changesetConfig = JSON.parse(
     fs.readFileSync(path.join(cwd, CHANGESET_CONFIG_LOCATION)).toString(),
