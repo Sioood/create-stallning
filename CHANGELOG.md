@@ -1,5 +1,15 @@
 # create-stallning
 
+## 0.2.0
+
+### Minor Changes
+
+- 2a08df6: feat: :sparkles: add stallning ascii
+
+### Patch Changes
+
+- 723c05e: fix: :clown_face: mock logger.log
+
 ## 0.1.3
 
 ### Patch Changes
