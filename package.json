@@ -1,0 +1,56 @@
+{
+  "name": "create-stallning",
+  "version": "0.0.0",
+  "description": "CLI to create a new project with stallning monorepo boilerplate",
+  "homepage": "https://github.com/sioood/create-stallning#readme",
+  "bugs": {
+    "url": "https://github.com/sioood/create-stallning/issues"
+  },
+  "license": "MIT",
+  "author": "Sioood <contact@theodupont.fr>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sioood/create-stallning.git"
+  },
+  "bin": {
+    "create-stallning": "./dist/cli.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "exports": {
+    ".": "./dist/cli.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "release": "bumpp",
+    "prepublishOnly": "pnpm run build",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
+  },
+  "dependencies": {
+    "commander": "^14.0.3",
+    "consola": "^3.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@typescript/native-preview": "7.0.0-dev.20260328.1",
+    "bumpp": "^11.0.1",
+    "oxfmt": "^0.44.0",
+    "oxlint": "^1.59.0",
+    "tsdown": "^0.21.7",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

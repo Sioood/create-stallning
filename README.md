@@ -1,23 +1,25 @@
-# tsdown-starter
+# create-stallning
 
-A starter for creating a TypeScript package.
+CLI to scaffold a project from the Stallning boilerplate templates.
+
+## Current status
+
+The command interface is bootstrapped and ready for incremental implementation.
+Core actions (download, transform, git, install) will be added step by step.
 
 ## Development
 
-- Install dependencies:
-
 ```bash
-npm install
+pnpm install
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
-- Run the unit tests:
+## Run the CLI locally
 
 ```bash
-npm run test
-```
-
-- Build the library:
-
-```bash
-npm run build
+pnpm build
+node dist/cli.mjs --help
 ```
