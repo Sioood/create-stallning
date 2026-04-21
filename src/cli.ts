@@ -8,6 +8,8 @@ import {
   DEFAULT_PROJECT_PREFIX,
   STALLNING_UPSTREAM_URL,
 } from './constants'
+import { runCreate } from './actions/run-create'
+import type { CreateContext } from './actions/types'
 import { logger } from './logger'
 
 type TemplateBranch = (typeof AVAILABLE_BRANCHES)[number]
@@ -173,21 +175,34 @@ Examples:
       }
     }
 
-    logger.debug('Resolved create options', {
+    const context: CreateContext = {
       projectName,
       template,
-      outDir,
+      targetPath,
       gitOrigin,
       upstream,
       strictGit,
-      force,
       dryRun,
       verbose,
       skipInstall,
+    }
+
+    logger.debug('Resolved create options', {
+      ...context,
+      force,
       upstreamRemote: upstream ? STALLNING_UPSTREAM_URL : undefined,
     })
 
-    logger.info('Step 1 complete: CLI contract/options are resolved and validated.')
-    logger.info('Next step: implement download/transform/git/install actions.')
+    try {
+      await runCreate(context)
+      logger.success(
+        dryRun
+          ? 'Dry run complete. No files were modified.'
+          : `Project "${projectName}" created at ${targetPath}`,
+      )
+    } catch (error) {
+      logger.error(error instanceof Error ? error.message : String(error))
+      process.exit(1)
+    }
   })
   .parseAsync(process.argv)
