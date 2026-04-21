@@ -1,5 +1,11 @@
 # create-stallning
 
+## 0.1.3
+
+### Patch Changes
+
+- 47e8aa7: fix: :memo: use @latest tag in documentation to ensure creation
+
 ## 0.1.2
 
 ### Patch Changes
