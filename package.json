@@ -2,15 +2,15 @@
   "name": "create-stallning",
   "version": "0.1.0",
   "description": "CLI to create a new project with stallning monorepo boilerplate",
-  "homepage": "https://github.com/sioood/create-stallning#readme",
+  "homepage": "https://github.com/Sioood/create-stallning#readme",
   "bugs": {
-    "url": "https://github.com/sioood/create-stallning/issues"
+    "url": "https://github.com/Sioood/create-stallning/issues"
   },
   "license": "MIT",
   "author": "Sioood <contact@theodupont.fr>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sioood/create-stallning.git"
+    "url": "git+https://github.com/Sioood/create-stallning.git"
   },
   "bin": {
     "create-stallning": "dist/cli.mjs"
