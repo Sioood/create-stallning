@@ -1,6 +1,6 @@
 <div align="center">
   <h1><b>create-stallning</b></h1>
-  <span>CLI to scaffold a new project from Ställning boilerplate templates (`minimal`, `nuxt`).</span>
+  <span>CLI to scaffold a new project from <a href="https://github.com/Sioood/stallning">Ställning</a> boilerplate templates (`minimal`, `nuxt`).</span>
 
   <img alt="image" src="https://github.com/user-attachments/assets/8331cc84-2fcc-48f4-93ce-a35b7dead2ea" style="width: 100%" />
 </div>
