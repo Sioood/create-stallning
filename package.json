@@ -29,6 +29,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "typecheck": "tsc --noEmit",
+    "verify": "pnpm run lint && pnpm run typecheck && pnpm run test:run",
     "knip": "knip",
     "changeset": "changeset",
     "changeset:gen": "node .changeset/changeset-conventional-commits.ts",
