@@ -1,7 +1,7 @@
 import { Command } from 'commander'
-import { existsSync } from 'node:fs'
+import { existsSync, realpathSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import pkg from '../package.json' with { type: 'json' }
 import {
   AVAILABLE_BRANCHES,
@@ -203,8 +203,19 @@ export const runCli = async (argv: string[] = process.argv): Promise<void> => {
   await program.parseAsync(argv)
 }
 
-const isExecutedDirectly =
-  typeof process.argv[1] === 'string' && import.meta.url === pathToFileURL(process.argv[1]).href
+const isExecutedDirectly = (() => {
+  if (typeof process.argv[1] !== 'string') {
+    return false
+  }
+
+  try {
+    const argvPath = realpathSync(process.argv[1])
+    const modulePath = fileURLToPath(import.meta.url)
+    return argvPath === modulePath
+  } catch {
+    return import.meta.url === pathToFileURL(process.argv[1]).href
+  }
+})()
 
 if (isExecutedDirectly) {
   runCli().catch((error: unknown) => {
