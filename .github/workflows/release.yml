@@ -41,9 +41,6 @@ jobs:
       - name: Build
         run: pnpm run build
 
-      - name: Generate changesets from commits
-        run: pnpm run changeset:gen --dry-run && pnpm run changeset:gen
-
       - name: Create release PR or publish to npm
         uses: changesets/action@v1
         with:
