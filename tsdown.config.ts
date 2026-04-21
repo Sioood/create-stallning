@@ -1,6 +1,7 @@
 import { defineConfig } from 'tsdown'
 
 export default defineConfig({
+  target: 'node25',
   dts: {
     tsgo: true,
   },

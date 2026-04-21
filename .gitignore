@@ -5,3 +5,4 @@ dist
 coverage
 .vitest
 src/**/*.d.ts
+src/**/*.js

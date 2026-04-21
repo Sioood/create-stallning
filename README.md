@@ -2,6 +2,11 @@
 
 CLI to scaffold a project from the Stallning boilerplate templates.
 
+## Requirements
+
+- Node.js `v25.8.0` or newer
+- pnpm
+
 ## Current status
 
 The command interface is bootstrapped and ready for incremental implementation.
