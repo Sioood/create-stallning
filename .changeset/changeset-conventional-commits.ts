@@ -1,18 +1,11 @@
-/**
- * @see https://github.com/moecasts/casts-design/blob/285f4f6e855137b9f2736e9eb6328b0d71885cf5/package.json
- * @see https://github.com/iamchathu/changeset-conventional-commits/blob/50bf163d24b0edfc3c9b8b1ab284ef61fbd07522/src/utils/index.ts
- * - This can be executed by pnpm dlx changeset-conventional-commits
- * - But docs, tests, ci and chore are considered minor
- */
-
 import readChangeset from '@changesets/read'
 import type { Changeset } from '@changesets/types'
 import writeChangeset from '@changesets/write'
 import { getPackagesSync } from '@manypkg/get-packages'
 import { execSync } from 'child_process'
 import { Command } from 'commander'
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 
 export interface PkgJson {
   name?: string
@@ -57,39 +50,57 @@ interface ConventionalMessagesToCommits {
   commitHashes: string[]
 }
 
-/*
- * Copied from conventional commits config:
- * https://github.com/conventional-changelog/conventional-changelog/blob/master/packages/conventional-changelog-conventionalcommits/writer-opts.js
- * "section" is currently unused but is left in, with the intent to update changeset changelog generation once more fleshed out
- */
-const defaultCommitTypes = [
-  { type: 'feat', section: 'Features' },
-  { type: 'feature', section: 'Features' },
-  { type: 'fix', section: 'Bug Fixes' },
-  { type: 'perf', section: 'Performance Improvements' },
-  { type: 'revert', section: 'Reverts' },
-  { type: 'docs', section: 'Documentation' },
-  { type: 'style', section: 'Styles' },
-  { type: 'chore', section: 'Miscellaneous Chores' },
-  { type: 'refactor', section: 'Code Refactoring' },
-  { type: 'test', section: 'Tests' },
-  { type: 'build', section: 'Build System' },
-  { type: 'ci', section: 'Continuous Integration' },
-]
+type ReleaseType = 'major' | 'minor' | 'patch'
+
+const conventionalTypePattern = /^([a-z]+)(?:\([^)]+\))?(!)?:/
+
+const RELEASE_RULES: Record<string, ReleaseType | null> = {
+  feat: 'minor',
+  feature: 'minor',
+  fix: 'patch',
+  perf: 'patch',
+  revert: 'patch',
+  refactor: 'patch',
+  build: 'patch',
+  docs: null,
+  test: null,
+  ci: null,
+  chore: null,
+  style: null,
+}
 
 export const isBreakingChange = (commit: string) => {
-  return (
-    commit.includes('BREAKING CHANGE:') ||
-    defaultCommitTypes.some((commitType) =>
-      commit.match(new RegExp(`^${commitType.type}(?:(.*))?!:`)),
-    )
-  )
+  if (commit.includes('BREAKING CHANGE:')) {
+    return true
+  }
+
+  const match = commit.match(conventionalTypePattern)
+  return Boolean(match?.[2])
 }
 
 export const isConventionalCommit = (commit: string) => {
-  return defaultCommitTypes.some((commitType) =>
-    commit.match(new RegExp(`^${commitType.type}(?:(.*))?!?:`)),
-  )
+  return conventionalTypePattern.test(commit)
+}
+
+export const getCommitType = (commit: string): string | null => {
+  const match = commit.match(conventionalTypePattern)
+  if (!match) {
+    return null
+  }
+  return match[1]
+}
+
+export const getReleaseTypeForCommit = (commit: string): ReleaseType | null => {
+  if (isBreakingChange(commit)) {
+    return 'major'
+  }
+
+  const commitType = getCommitType(commit)
+  if (!commitType) {
+    return null
+  }
+
+  return RELEASE_RULES[commitType] ?? null
 }
 
 /* Attempts to associate non-conventional commits to the nearest conventional commit */
@@ -137,7 +148,11 @@ export const associateCommitsToConventionalCommitMessages = (
 }
 
 export const getFilesChangedSince = (opts: { from: string; to: string }) => {
-  return execSync(`git diff --name-only ${opts.from}~1...${opts.to}`).toString().trim().split('\n')
+  const output = execSync(`git diff --name-only ${opts.from}~1...${opts.to}`).toString().trim()
+  if (!output) {
+    return []
+  }
+  return output.split('\n')
 }
 
 export const getRepoRoot = () => {
@@ -149,39 +164,43 @@ export const conventionalMessagesWithCommitsToChangesets = (
   options: { ignoredFiles?: (string | RegExp)[]; packages: ManyPkgPackage[] },
 ) => {
   const { ignoredFiles = [], packages } = options
+  const repoRoot = getRepoRoot()
+
   return conventionalMessagesToCommits
     .map((entry) => {
+      const releaseType = getReleaseTypeForCommit(entry.changelogMessage)
+      if (!releaseType) {
+        return null
+      }
+
       const filesChanged = getFilesChangedSince({
         from: entry.commitHashes[0],
         to: entry.commitHashes[entry.commitHashes.length - 1],
       }).filter((file) => {
         return ignoredFiles.every((ignoredPattern) => !file.match(ignoredPattern))
       })
+
       const packagesChanged = packages.filter((pkg) => {
-        const pkgDir = `${pkg.dir.replace(`${getRepoRoot()}/`, '')}/`
+        const pkgDir = `${pkg.dir.replace(`${repoRoot}/`, '')}/`
         return filesChanged.some((file) => file.match(pkgDir))
       })
-      console.log(
-        `${entry.commitHashes[entry.commitHashes.length - 1]}  packagesChanged`,
-        packagesChanged?.map((pkg) => pkg.packageJson.name),
-      )
+
+      const packageNames = packagesChanged
+        .map((pkg) => pkg.packageJson.name)
+        .filter((name): name is string => Boolean(name))
+
+      console.log(`${entry.commitHashes.at(-1)} packagesChanged`, packageNames)
+
       if (packagesChanged.length === 0) {
         return null
       }
+
       return {
-        releases: packagesChanged.map((pkg) => {
-          return {
-            name: pkg.packageJson.name,
-            // Maybe add a mapping of commit types to semver levels so chore, refactor, test, etc. don't bump the version
-            type: isBreakingChange(entry.changelogMessage)
-              ? 'major'
-              : entry.changelogMessage.startsWith('feat')
-                ? 'minor'
-                : 'patch',
-          }
-        }),
+        releases: packageNames.map((name) => ({
+          name,
+          type: releaseType,
+        })),
         summary: entry.changelogMessage,
-        packagesChanged,
       }
     })
     .filter(Boolean) as Changeset[]
@@ -234,7 +253,7 @@ const CHANGESET_CONFIG_LOCATION = path.join('.changeset', 'config.json')
 
 const conventionalCommitChangeset = async (
   cwd: string = process.cwd(),
-  options: { ignoredFiles: (string | RegExp)[] } = { ignoredFiles: [] },
+  options: { ignoredFiles?: (string | RegExp)[]; dryRun?: boolean } = {},
 ) => {
   const packages = getPackagesSync(cwd).packages.filter(
     (pkg) => !pkg.packageJson.private && Boolean(pkg.packageJson.version),
@@ -267,17 +286,42 @@ const conventionalCommitChangeset = async (
   const newChangesets =
     currentChangesets.length === 0 ? changesets : difference(changesets, currentChangesets)
 
-  newChangesets.map((changeset) => writeChangeset(changeset, cwd))
+  if (newChangesets.length === 0) {
+    console.log('No new changesets detected from commit history.')
+    return
+  }
+
+  if (options.dryRun) {
+    console.log(`Dry run: ${newChangesets.length} changeset(s) would be created.`)
+    for (const changeset of newChangesets) {
+      console.log(`- ${changeset.summary}`)
+    }
+    return
+  }
+
+  for (const changeset of newChangesets) {
+    writeChangeset(changeset, cwd)
+  }
 }
 
-export const runChangesets = () => {
-  conventionalCommitChangeset()
+export const runChangesets = async (options: { dryRun?: boolean }) => {
+  await conventionalCommitChangeset(process.cwd(), {
+    ignoredFiles: [],
+    dryRun: options.dryRun,
+  })
 }
 
 const run = () => {
-  const program = new Command('changesets').action(() => runChangesets())
+  const program = new Command('changesets')
+    .option('--dry-run', 'Print proposed changesets without writing files', false)
+    .action(async (options) => {
+      await runChangesets({ dryRun: options.dryRun })
+    })
 
-  program.parse()
+  program.parseAsync(process.argv).catch((error: unknown) => {
+    console.error(error)
+    process.exit(1)
+  })
 }
 
 run()
