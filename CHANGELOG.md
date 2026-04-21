@@ -1,5 +1,21 @@
 # create-stallning
 
+## 0.3.0
+
+### Minor Changes
+
+- feat: :sparkles: add tiged mode option (tar/git) for private SSH template access
+- feat: :sparkles: add zod-based immutable create context validation
+- feat: ✨ implement robust step-1 command contract and option resolution
+- feat: ✨ implement download/transform/git/install action pipeline
+
+### Patch Changes
+
+- fix: 🧪 harden rename flow and add integration-style transform tests
+- fix: :bug: release scope
+- fix: :bug: changesets
+- fix: :bug: bin path
+
 ## 0.2.0
 
 ### Minor Changes
