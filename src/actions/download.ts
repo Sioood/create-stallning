@@ -9,7 +9,9 @@ export const downloadTemplate = async (ctx: CreateContext): Promise<void> => {
   const source = `${TEMPLATE_REPO_SLUG}#${ctx.template}`
 
   if (ctx.dryRun) {
-    logger.info(`[dry-run] download template ${source} into ${ctx.targetPath}`)
+    logger.info(
+      `[dry-run] download template ${source} into ${ctx.targetPath} using mode=${ctx.templateMode}`,
+    )
     return
   }
 
@@ -19,6 +21,7 @@ export const downloadTemplate = async (ctx: CreateContext): Promise<void> => {
     disableCache: true,
     force: true,
     verbose: ctx.verbose,
+    mode: ctx.templateMode,
   })
 
   if (ctx.verbose) {

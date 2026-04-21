@@ -30,6 +30,7 @@ create-stallning [project-name] [options]
 ### Main Options
 
 - `-t, --template <template>`: template branch to use (`minimal`, `nuxt`)
+- `--mode <mode>`: template download mode (`tar` default, `git` for SSH git clone)
 - `-o, --out-dir <path>`: output directory (default: `project-name`)
 - `--git-origin <url>`: origin remote URL to configure
 - `--upstream`: add Stallning template as upstream remote
@@ -43,6 +44,8 @@ create-stallning [project-name] [options]
 ### Behavior Notes
 
 - If project name is missing, default is `new-stallning-{template}`.
+- `--mode tar` is faster and default (GitHub tarball fetch).
+- `--mode git` uses git under the hood (SSH) and is better for private repos with SSH access.
 - If `--git-origin` is set and `--upstream` is not explicitly provided, upstream is enabled automatically.
 - On non-strict mode, a failed initial `git push` is reported as warning and creation continues.
 
@@ -58,6 +61,12 @@ Create a Nuxt variant and configure git remotes:
 
 ```bash
 pnpm create stallning my-app --template nuxt --git-origin https://github.com/acme/my-app.git --upstream
+```
+
+Use git mode for private templates over SSH:
+
+```bash
+pnpm create stallning my-app --template minimal --mode git
 ```
 
 Dry run without modifying disk:

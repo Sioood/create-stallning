@@ -28,6 +28,7 @@ const createContext = (
   projectName: 'my-project',
   template: 'minimal',
   targetPath,
+  templateMode: 'tar',
   dryRun: false,
   verbose: false,
   skipInstall: false,

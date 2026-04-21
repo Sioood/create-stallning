@@ -37,6 +37,7 @@ export const createProgram = (): Command => {
       `Template branch to use (${AVAILABLE_BRANCHES.join(', ')})`,
       DEFAULT_BRANCH,
     )
+    .option('--mode <mode>', 'Template download mode (tar or git)', 'tar')
     .option('-o, --out-dir <path>', 'Target directory (default: project name)')
     .option('--git-origin <url>', 'Set origin remote URL')
     .option('--upstream', 'Add stallning template as upstream remote', false)
@@ -58,6 +59,7 @@ Examples:
       let {
         yes,
         template,
+        mode,
         outDir,
         gitOrigin,
         upstream,
@@ -165,6 +167,7 @@ Examples:
           projectName,
           template,
           targetPath,
+          templateMode: mode,
           gitOrigin,
           upstream:
             gitOrigin && getOptionSource(program, 'upstream') === 'default' ? true : upstream,

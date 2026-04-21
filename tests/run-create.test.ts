@@ -60,6 +60,7 @@ const createContext = (overrides: Partial<CreateContext> = {}): CreateContext =>
   projectName: 'my-project',
   template: 'minimal',
   targetPath: '/tmp/my-project',
+  templateMode: 'tar',
   dryRun: false,
   verbose: false,
   skipInstall: false,

@@ -12,6 +12,7 @@ const createContext = (targetPath: string, dryRun = false): CreateContext => ({
   projectName: 'my-project',
   template: 'minimal',
   targetPath,
+  templateMode: 'tar',
   dryRun,
   verbose: false,
   skipInstall: true,

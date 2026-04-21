@@ -12,6 +12,7 @@ const createContextSchema = z.object({
     .regex(PROJECT_NAME_REGEX, 'projectName must follow npm package naming conventions'),
   template: z.enum(AVAILABLE_BRANCHES),
   targetPath: z.string().min(1, 'targetPath is required'),
+  templateMode: z.enum(['tar', 'git']),
   dryRun: z.boolean(),
   verbose: z.boolean(),
   skipInstall: z.boolean(),
