@@ -5,6 +5,7 @@ const { existsSyncMock, runCreateMock, loggerMock } = vi.hoisted(() => ({
   runCreateMock: vi.fn(),
   loggerMock: {
     level: 3,
+    log: vi.fn(),
     debug: vi.fn(),
     start: vi.fn(),
     error: vi.fn(),
