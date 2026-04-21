@@ -13,7 +13,7 @@
     "url": "git+https://github.com/sioood/create-stallning.git"
   },
   "bin": {
-    "create-stallning": "./dist/cli.mjs"
+    "create-stallning": "dist/cli.mjs"
   },
   "files": [
     "dist"
