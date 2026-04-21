@@ -8,7 +8,7 @@
 ## Requirements
 
 - Node.js `v25.8.0` or newer
-- pnpm
+- pnpm (not required to scaffold a project, but needed for working with the stallning monorepo)
 
 ## Quick Start
 
@@ -122,6 +122,8 @@ Useful commands:
 ```bash
 pnpm run changeset:gen --dry-run
 pnpm run changeset:gen
+
+# is handled in the CI/CD .github/workflows/release.yml
 pnpm run changeset:version
 pnpm run changeset:publish
 ```
@@ -130,10 +132,6 @@ GitHub Actions:
 
 - `.github/workflows/ci.yml`: lint, typecheck, tests, build, knip
 - `.github/workflows/release.yml`: generates changesets, opens release PR, publishes to npm
-
-Required repository secret for publishing:
-
-- `NPM_TOKEN`
 
 ## Troubleshooting
 

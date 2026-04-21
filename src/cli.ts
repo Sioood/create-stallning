@@ -13,6 +13,8 @@ import {
 import { runCreate } from './actions/run-create'
 import { parseCreateContext } from './context'
 import { logger } from './logger'
+import { colorize } from 'consola/utils'
+import { ASCII_BANNER } from './banner'
 
 const isTemplateBranch = (value: string): value is TemplateBranch =>
   AVAILABLE_BRANCHES.some((branch) => branch === value)
@@ -76,7 +78,10 @@ Examples:
         logger.debug('Verbose mode enabled')
       }
 
-      logger.start('Creating new project with stallning')
+      logger.log(ASCII_BANNER)
+      logger.start(
+        `Creating new project with ${colorize('underline', colorize('bold', 'stallning'))} (${colorize('blue', 'https://github.com/Sioood/stallning')})`,
+      )
 
       const templateSource = getOptionSource(program, 'template')
       if (!yes && templateSource === 'default') {
