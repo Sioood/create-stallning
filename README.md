@@ -122,6 +122,8 @@ Useful commands:
 ```bash
 pnpm run changeset:gen --dry-run
 pnpm run changeset:gen
+
+# is handled in the CI/CD .github/workflows/release.yml
 pnpm run changeset:version
 pnpm run changeset:publish
 ```
